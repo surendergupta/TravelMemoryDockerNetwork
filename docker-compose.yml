@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - /data/db
+    networks:
+      - travelmemory-network
+
+  travel_memory_be:
+    image: travel_memory_be:latest
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      MONGO_URI: mongodb://root:secret1234@mongodb:27017/travelmemory
+    networks:
+      - travelmemory-network
+    depends_on:
+      - mongodb
+  
+  travel_memory_fe:
+    image: travel_memory:latest
+    ports:
+      - "3002:3000"
+    networks:
+      - travelmemory-network
+networks:
+  travelmemory-network:
